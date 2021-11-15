@@ -1,0 +1,38 @@
+.details {
+    width: 1040px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 16px;
+    
+    box-shadow: 3px 3px 20px 1px #0000004a;
+}
+
+.detals_header{
+    display: flex;
+    justify-content: space-around;
+}
+
+.detals_header__img {
+    max-width: 200px;
+    margin: 15px 0;
+    & img {
+        width: 100%;
+    }
+}
+
+.link {
+    color: #2E8BC0;
+}
+
+.title {
+    background-color: #B1D4E0;
+    box-shadow: 1px 1px 5px 1px #00000052;
+    padding: 10px 0;
+}
+
+.detals_header__item {
+    text-align: left;
+}
+.detals_body {
+    padding: 10px 0;
+}
