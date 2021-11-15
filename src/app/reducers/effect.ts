@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RepoService } from '../services/repo.service';
 import { foundReposAction, loadAction } from './searchQuery';
@@ -14,11 +14,12 @@ export class dataEffect {
         ofType(loadAction.type),
         switchMap(() => {
           console.log('fsfsfsf')
-          return  this.repoService.getFirstRepos().pipe(
+          return this.repoService.getFirstRepos().pipe(
+            tap(console.log),
+            map(val => val['items']),
             map((result: any[]) => {
               const tempArr: any[] = [];
-              result.map((item, index) => {
-                console.log('effect getfirst',result)
+              result.forEach((item, index) => {
                 let obj = {
                   index: `${index + 1}.`,
                   author: item.owner.login,
