@@ -57,13 +57,13 @@ export const searchQueryReducer = createReducer(
             repositories: action.repositories
         }
     }),
-    on(loadAction, (state, action)  => {
+    /* on(loadAction, (state, action)  => {
             
         return {
             ...state,
             loadPage: true,
         }
-    })
+    }) */
 )
 
 //Selectors

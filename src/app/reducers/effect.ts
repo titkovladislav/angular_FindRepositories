@@ -12,8 +12,9 @@ export class dataEffect {
     () => {
       return this.action$.pipe(
         ofType(loadAction.type),
-        switchMap(() =>
-          this.repoService.getFirstRepos().pipe(
+        switchMap(() => {
+          console.log('fsfsfsf')
+          return  this.repoService.getFirstRepos().pipe(
             map((result: any[]) => {
               const tempArr: any[] = [];
               result.map((item, index) => {
@@ -31,6 +32,8 @@ export class dataEffect {
               return foundReposAction({repositories: tempArr}) 
             })
           )
+        }
+         
         )
       );
     },
