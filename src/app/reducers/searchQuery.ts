@@ -1,70 +1,52 @@
 import { createAction, createFeatureSelector, createReducer, createSelector, on, props } from "@ngrx/store";
-//import { selectFeature}
 
-export const addtitleKey = createAction('[SEARCHQUERY] changeTitleKey', props<{titleKey: string}>());
-export const addlanguageKey = createAction('[SEARCHQUERY] languageKey');
-export const addauthorKey = createAction('[SEARCHQUERY] authorKey');
-export const loadAction = createAction('LOADDATA');
-export const foundReposAction = createAction('[SEARCHQUERY] foundRepos', props<{repositories: any}>());
+export const addTitleKey = createAction('[SEARCHQUERY] changeTitleKey', props<{titleKey: string}>());
+export const addLanguageKeyAction = createAction('[SEARCHQUERY] languageKey', props<{languageKey: string}>());
+export const loadRepositoriesAction = createAction('[LOADDATA] loadRepositories');
+export const setRepositoriesAction = createAction('[SEARCHQUERY] foundRepos', props<{repositories: any}>());
+
+export interface FilterI {
+  titleKey: string;
+  languageKey: string;
+};
 
 export interface searchQueryState {
-    filter: {
-        titleKey: string;
-        languageKey: string;
-        authorKey: string;
-    };
-    loadPage: boolean;
+    filter: FilterI;
     repositories: any[];
-}
+};
 
 export const initialState: searchQueryState = {
     filter: {
-        titleKey: '',
+        titleKey: 'a',
         languageKey: '',
-        authorKey: '',
     },
-    loadPage: false,
     repositories: [],
-}
-
-// export interface initialStateF {
-//     filter: {
-//         titleKey: '',
-//         languageKey: '',
-//         authorKey: '',
-//     },
-//     repositories: []
-    
-// }
-
-// export interface AppState {
-//     feature: searchQueryState;
-//   }
+};
 
 export const searchQueryReducer = createReducer(
     initialState,
-    on(addtitleKey, (state, action) => {
+    on(setRepositoriesAction, (state, action)  => {
+
+      return {
+        ...state,
+        repositories: action.repositories
+      }
+    }),
+    on(addTitleKey, (state, action) => {
 
         return {
             ...state,
             filter: { ...state.filter, titleKey: action.titleKey }
         }
     }),
-    on(foundReposAction, (state, action)  => {
-            
-        return {
-            ...state,
-            repositories: action.repositories
-        }
+    on(addLanguageKeyAction, (state, action)  => {
+
+      return {
+        ...state,
+        filter: { ...state.filter, languageKey: action.languageKey }
+      }
     }),
-    /* on(loadAction, (state, action)  => {
-            
-        return {
-            ...state,
-            loadPage: true,
-        }
-    }) */
-)
+);
 
 //Selectors
 
@@ -72,7 +54,6 @@ export const selectFeature = createFeatureSelector<searchQueryState>("searchQuer
 export const repositoriesSelector = createSelector(
     selectFeature,
     state => {
-        console.log(state.repositories, 60)
         return state.repositories
     }
 );
@@ -82,6 +63,4 @@ export const filterSelector = createSelector(
         return state.filter
     }
 )
-
-//Effect
 

@@ -1,12 +1,16 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
-//import { Routes, RouterModule } from '@angular/router';
-import { Repo } from './repo'
 import { RepoService } from 'src/app/services/repo.service';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { select, State, Store } from '@ngrx/store';
-import { addtitleKey, foundReposAction, loadAction, repositoriesSelector, searchQueryState } from 'src/app/reducers/searchQuery';
+import { Subject, takeUntil} from 'rxjs';
+import { Store } from '@ngrx/store';
+import {
+  addTitleKey,
+  loadRepositoriesAction,
+  repositoriesSelector,
+  searchQueryState,
+  addLanguageKeyAction
+} from 'src/app/reducers/searchQuery';
 
 @Component({
   selector: 'app-repositories',
@@ -14,89 +18,52 @@ import { addtitleKey, foundReposAction, loadAction, repositoriesSelector, search
   styleUrls: ['./repositories.component.scss']
 })
 
-
-export class RepositoriesComponent implements OnInit {
-
-  repos: any = [];
-  //repos$: Observable<Array<repos>>;
-  //repositories$ = this.store.pipe(select(repositoriesSelector));
-  titleKey = new FormControl('');
-  //repositories = (state: ) => state.users;
-  //selectUsers = (state: State) => state.users;
-  
-  searchForm: any = {
-    titleKey: '',
-    language: '+language:javascript',
-    author: '',
-  };
-
-  private unsubscribe$: Subject<void> = new Subject();
-  
+export class RepositoriesComponent implements OnInit, OnDestroy {
   constructor(
     private repoService: RepoService,
-    private store: Store<searchQueryState>
-    
-  ) {
-    
-   }
-  
-  ngOnInit(): void {
-    this.store.select(repositoriesSelector).subscribe(val => this.repos = val)
-    //this.repos$ = this.store.select(repositoriesSelector)
-    //this.getItems()
-    this.store.dispatch(loadAction())
+    private store: Store<searchQueryState>,
+  ) { }
+
+  repos: any = [];
+  titleKey = new FormControl('');
+  languageKey = new FormControl('');
+
+  private unsubscribe$: Subject<void> = new Subject();
+
+  ngOnInit() {
+
+    this.store.select(repositoriesSelector)
+      .subscribe(({ length }) => {
+        if (!length) {
+          this.store.dispatch(loadRepositoriesAction());
+        }
+      });
+
+    this.store.select(repositoriesSelector)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(repositories => this.repos = repositories);
 
     this.titleKey.valueChanges
     .pipe(
       debounceTime(1300),
-      takeUntil(this.unsubscribe$)
+      takeUntil(this.unsubscribe$),
     )
-    .subscribe(val => {
-      this.searchForm.titleKey = val;
-      this.store.dispatch(addtitleKey({titleKey: val}));
-      this.getItems();
-    })
-  }
+    .subscribe(input => {
+      this.store.dispatch(addTitleKey({ titleKey: input }));
+    });
 
-  getItems(){
-    this.repoService
-      .getRepos(this.searchForm)
+    this.languageKey.valueChanges
       .pipe(
-        map(val => val['items']),
+        debounceTime(1300),
+        takeUntil(this.unsubscribe$),
       )
-      .subscribe((result: any[]) => {
-        const tempArr: any[] = []
-        result.map((item, index) => {
-          let obj = {
-            index: `${index + 1}.`,
-            author: item.owner.login,
-            name: item.name,
-            description: item.description,
-            link: item.html_url,
-            id: item.id,
-          }
-          tempArr.push(obj)
-        })
-        this.store.dispatch(foundReposAction({repositories: tempArr}))
+      .subscribe(input => {
+        this.store.dispatch(addLanguageKeyAction({ languageKey: input }));
       });
   }
 
-  getItemOne(){
-    this.repoService.getFirstRepos().pipe(
-      map(val => val['items']),
-    )
-    .subscribe((result: any[]) => {
-      return console.log('getItemOne', result)
-    })
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
-  
-  addTitle(){
-    this.getItemOne()
-    //this.store.dispatch(addtitleKey({titleKey: this.test}))
-    //console.log(this.searchForm);
-    //this.store.select(repositoriesSelector).subscribe(val => console.log(val))
-    //this.store.dispatch(loadAction())
-    console.log('repos 2',this.repos)
-  }
-
 }

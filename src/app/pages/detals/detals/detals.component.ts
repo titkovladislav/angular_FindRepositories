@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil, map } from 'rxjs';
 import { RepoService } from 'src/app/services/repo.service';
+import { repositoriesSelector } from "../../../reducers/searchQuery";
+import { Store } from "@ngrx/store";
+import { mergeMap } from "rxjs/operators";
 
 @Component({
   selector: 'app-detals',
@@ -9,64 +12,40 @@ import { RepoService } from 'src/app/services/repo.service';
   styleUrls: ['./detals.component.scss']
 })
 export class DetalsComponent implements OnInit, OnDestroy {
-
-  
-  item: any = {}
-  searchForm: any = {
-    titleKey: '',
-    language: '',
-    author: '',
-  }
-
-  private unsubscribe$: Subject<void> = new Subject();
-  
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private repoService: RepoService,
+    private store: Store
   ) { }
+
+  repository: any = {}
+  private unsubscribe$: Subject<void> = new Subject();
 
   ngOnInit(): void {
 
-    this.route.params
+    this.store.select(repositoriesSelector)
       .pipe(
-       
-        map( val =>  val['id']),
-        takeUntil(this.unsubscribe$),
-
+        mergeMap(repositories => {
+          return this.route.params
+            .pipe(
+              map( ({ id }) =>  {
+                return repositories.find((repository: any) => repository.id === +id)
+              }),
+              takeUntil(this.unsubscribe$)
+            )
+        })
       )
-      .subscribe( id => {
-        this.searchForm.titleKey = id.split('&')[0]
-        this.searchForm.author = `+user:${id.split('&')[1]}`
-      })
+      .subscribe(repo => this.repository = repo)
+  }
 
-    this.getItem()
-   
+  goHome(){
+    this.router.navigate(['']);
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  getItem(){
-    this.repoService
-      .getRepos(this.searchForm)
-      .pipe(
-        map(val => val.items[0]),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(val => {
-        this.item = {
-          title: val.name,
-          avatar: val.owner.avatar_url,
-          author: val.owner.login,
-          language: val.language,
-          url: val.html_url,
-          created_at: val.created_at.substr(0,10),
-          updated_at: val.updated_at.substr(0,10),
-          description: val.description,
-        }
-      });
   }
 
 }

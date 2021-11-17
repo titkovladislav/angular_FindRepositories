@@ -1,13 +1,11 @@
 <div class="container">
     <div class="header">
         <h1>Repositories</h1>
-        
         <input id="search2" type="text" placeholder="Repositories" [formControl]="titleKey">
-        <select name="" id="" [(ngModel)] = "searchForm.language">
+        <select  [formControl]="languageKey">
             <option value="+language:javascript" selected="selected">javascript</option>
             <option value="+language:php" selected="selected">php</option>
         </select>
-        <button (click)="addTitle()">search</button>
     </div>
 
     <table>
@@ -23,33 +21,12 @@
         <tbody>
             <tr className="table-row" *ngFor="let repo of repos">
                 <td>{{repo.index}}</td>
-                <td>{{repo.name}}</td>
+                <td>{{repo.title}}</td>
                 <td>{{repo.author}}</td>
                 <td>{{repo.description}}</td>
-                <td><a routerLink="/detals/{{repo.name}}&{{repo.author}}" routerLinkActive="active" class="link">More</a></td>
+                <td><a routerLink="/detals/{{repo.id}}" routerLinkActive="active" class="link">More</a></td>
             </tr>
         </tbody>
     </table>
-    
-<!--     <div class="list">
-        <div class="list_head">
-            <p>#</p>
-            <p>Name</p>
-            <p>Author</p>
-            <p class="descript">Description</p>
-            <p>Link</p>
-        </div>
-        <ol class="list_body">
-            <li class="list_item" *ngFor="let repo of repos">
-                
-                <p>{{repo.id}}</p>
-                <p class="list_item__name">{{repo.name}}</p>
-                <p class="list_item__author">{{repo.author}}</p>
-                <p class="descript">{{repo.description}}</p>
-                <p><a href={{repo.link}} class="link">link</a></p>
-            </li>
-
-        </ol>
-    </div> -->
 </div>
 

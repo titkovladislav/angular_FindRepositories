@@ -1,18 +1,21 @@
 <div class="details">
-    <div class="title"><h1>{{item.title}}</h1></div>
+    <div class="title">
+      <div class="arrow_img" (click)="goHome()"><img src="../../../../assets/left_arrow.png"></div>
+      <div><h1>{{ repository.title }}</h1></div>
+    </div>
     <div class="detals_header">
-        <div class="detals_header__img"><img src="{{item.avatar}}" alt="avatar"></div>
+        <div class="detals_header__img"><img src="{{ repository.avatar }}" alt="avatar"></div>
         <div class="detals_header__item">
-            <p><b>Author:</b> {{item.author}}</p>
-            <p><b>Language:</b> {{item.language}}</p>
-            <p><b>Url: </b> <a href="{{item.url}}" class="link">{{item.url}}</a></p>
+            <p><b>Author:</b> {{ repository.author }}</p>
+            <p><b>Language:</b> {{ repository.language }}</p>
+            <p><b>Url: </b> <a href="{{ repository.url }}" class="link">{{ repository.url }}</a></p>
         </div>
         <div class="detals_header__item">
-            <p><b>Date create:</b> {{item.created_at}}</p>
-            <p><b>Last update:</b> {{item.updated_at}}</p>
+            <p><b>Date create:</b> {{ repository.created_at }}</p>
+            <p><b>Last update:</b> {{ repository.updated_at }}</p>
         </div>
     </div>
     <div class="detals_body">
-        <p><b>Description:</b> {{item.description}}</p>
+        <p><b>Description:</b> {{ repository.description }}</p>
     </div>
 </div>
