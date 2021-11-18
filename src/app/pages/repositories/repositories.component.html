@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr className="table-row" *ngFor="let repo of repos">
+            <tr className="table-row" *ngFor="let repo of ( repositories$ | async)">
                 <td>{{repo.index}}</td>
                 <td>{{repo.title}}</td>
                 <td>{{repo.author}}</td>

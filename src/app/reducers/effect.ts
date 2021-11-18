@@ -29,7 +29,7 @@ export class dataEffect {
                 result.forEach((item, index) => {
                   const repository = {
                     index: `${index + 1}.`,
-                    author: item.owner.login,
+                    authorName: item.owner.login,
                     avatar: item.owner.avatar_url,
                     title: item.name,
                     language: item.language,

@@ -1,12 +1,12 @@
-<div class="details">
+<div class="details" *ngIf="(repository$ | async) as repository">
     <div class="title">
       <div class="arrow_img" (click)="goHome()"><img src="../../../../assets/left_arrow.png"></div>
-      <div><h1>{{ repository.title }}</h1></div>
+      <div><h1>{{ repository.title  }}</h1></div>
     </div>
-    <div class="detals_header">
+    <div class="detals_header"  >
         <div class="detals_header__img"><img src="{{ repository.avatar }}" alt="avatar"></div>
         <div class="detals_header__item">
-            <p><b>Author:</b> {{ repository.author }}</p>
+            <p><b>Author:</b> {{ repository.authorName }}</p>
             <p><b>Language:</b> {{ repository.language }}</p>
             <p><b>Url: </b> <a href="{{ repository.url }}" class="link">{{ repository.url }}</a></p>
         </div>

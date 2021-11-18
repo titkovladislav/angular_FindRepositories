@@ -24,11 +24,12 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
     private store: Store<searchQueryState>,
   ) { }
 
-  repos: any = [];
+  private unsubscribe$: Subject<void> = new Subject();
+
+  repositories$ = this.store.select(repositoriesSelector)
+    .pipe(takeUntil(this.unsubscribe$));
   titleKey = new FormControl('');
   languageKey = new FormControl('');
-
-  private unsubscribe$: Subject<void> = new Subject();
 
   ngOnInit() {
 
@@ -39,9 +40,7 @@ export class RepositoriesComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.store.select(repositoriesSelector)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(repositories => this.repos = repositories);
+    // this.repositories$.subscribe(repositories => repositories);
 
     this.titleKey.valueChanges
     .pipe(
